@@ -8,7 +8,7 @@
 
 #### `AudioDrop(options)`
 
-Call `AudioDrop` with an options argument if you want to do some additional configuration.
+Call `AudioDrop` with an options object. Required options are `context`, `elements`, and `drop`.
 
 ```javascript
 AudioDrop({
@@ -20,27 +20,21 @@ AudioDrop({
   elements: document.querySelector('#dropzone'),
 
   // the callback to handle each file (required)
-  callback: function(buffer, file) {
+  drop: function(buffer, file) {
     window[file.name] = buffer;
     console.log('Added the buffer ' + file.name + ' to the window.');
   },
 
-  // Recurse through subfolders (default: true)
-  recurse: true,
-
   // DOM Events
 
   // called when there is a file being dragged into the dropzone
-  dragIn: function(e) { },
+  dragEnter: function(e) { },
 
   // called repeatedly while a file is being dragged on the dropzone
   dragOver: function(e) { },
 
   // called when there is a file being dragged out of the dropzone
-  dragOut: function(e) { },
-
-  // called when a file has dropped over a dropzone
-  dragEnd: function(e) { }
+  dragLeave: function(e) { },
 })
 ```
 
@@ -56,7 +50,7 @@ A convenience function for determining whether or not a string, if turned into a
 AudioDrop({
   context: new AudioContext(),
   elements: window.document.body,
-  callback: function(buffer, file) {
+  drop: function(buffer, file) {
     var name = file.name.replace(/\.[^/.]+$/, "");
     if( AudioDrop.isValidVariableName(name) ) {
       window[name] = buffer;

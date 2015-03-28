@@ -1,0 +1,47 @@
+body,html
+{
+  font-family: 'Andale Mono', 'Inconsolata', 'Courier New', monospace;
+  text-align: center;
+}
+
+*
+{
+  box-sizing: border-box;
+}
+
+.box
+{
+  display: inline-block;
+  vertical-align: top;
+  width: 280px;
+  height: 280px;
+  padding: 20px;
+
+  text-align: center;
+}
+
+/* prevent duplicate drag enter/leave events for child elements */
+.box *
+{
+  pointer-events: none;
+}
+
+#simple-test
+{
+  background-color: #79BC8A;
+  border: 8px solid transparent;
+}
+
+#advanced-test
+{
+  background-color: #72A2BC;
+  border: 8px dashed transparent;
+
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+#advanced-test.over
+{
+  background-color: #A2CEE0;
+  border-color: #72A2BC;
+}

@@ -1,6 +1,6 @@
 # AudioDrop
 
-<img src="https://github.com/kylestetz/AudioDrop/blob/master/audiodrop.png" width="75" height="75" />
+<img src="https://github.com/kylestetz/AudioDrop/blob/master/audiodrop.png" width="75" height="75" align="left" />
 
 `AudioDrop` is a utility that enables drag-and-drop loading of Audio Buffers. Simply specify an element to be designated as a drop zone and provide a callback that determines how to handle the newly-created audio buffer.
 

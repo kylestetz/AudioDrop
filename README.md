@@ -4,25 +4,7 @@
 
 *For use with the Web Audio API*: If you're looking for a general drag-and-drop utility you may want to check out [dropzone](http://www.dropzonejs.com/). Audiodrop makes use of the [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API) to decode audio files into [`AudioBuffer`](https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer) objects.
 
-### API
-
-#### `AudioDrop(element, callback)`
-#### `AudioDrop(elements, callback)`
-
-Pass a DOM element or an array of DOM elements, and a callback. The callback takes the arguments `buffer` (the decoded `AudioBuffer`) and `file` (the original file object from the load event).
-
-```javascript
-var element = document.querySelector('#dropzone');
-
-AudioDrop(element, function(buffer, file) {
-  // buffer is an AudioBuffer
-  // file is the original file object
-  window[file.name] = buffer;
-  console.log('Added the buffer ' + file.name + ' to the window.');
-});
-```
-
-The callback is called once for each file passed in. Folders will be automatically recursed through.
+## API
 
 #### `AudioDrop(options)`
 
@@ -30,16 +12,61 @@ Call `AudioDrop` with an options argument if you want to do some additional conf
 
 ```javascript
 AudioDrop({
-  // a DOM Element or an array of DOM Elements
+
+  // the web audio context (required)
+  context: myAudioContext,
+
+  // a DOM Element or an array of DOM Elements (required)
   elements: document.querySelector('#dropzone'),
-  // Recurse through subfolders (default: true)
-  recurse: true,
-  // the callback to handle each file
+
+  // the callback to handle each file (required)
   callback: function(buffer, file) {
     window[file.name] = buffer;
     console.log('Added the buffer ' + file.name + ' to the window.');
-  }
+  },
+
+  // Recurse through subfolders (default: true)
+  recurse: true,
+
+  // DOM Events
+
+  // called when there is a file being dragged into the dropzone
+  dragIn: function(e) { },
+
+  // called repeatedly while a file is being dragged on the dropzone
+  dragOver: function(e) { },
+
+  // called when there is a file being dragged out of the dropzone
+  dragOut: function(e) { },
+
+  // called when a file has dropped over a dropzone
+  dragEnd: function(e) { }
 })
+```
+
+#### `AudioDrop.isValidVariableName(String)`
+
+A convenience function for determining whether or not a string, if turned into a variable name, would violate a reserved keyword. This is useful if you are planning to attach the variable to the `window`, as in the example below.
+
+## Examples
+
+#### Attach the audio buffer to the window.
+
+```javascript
+AudioDrop({
+  context: new AudioContext(),
+  elements: window.document.body,
+  callback: function(buffer, file) {
+    var name = file.name.replace(/\.[^/.]+$/, "");
+    if( AudioDrop.isValidVariableName(name) ) {
+      window[name] = buffer;
+      console.log('Added the variable "' + name + '"" to the window.');
+    } else {
+      window[name + '-sample'] = buffer;
+      console.log('Added the variable window["' + name + '-sample"] to the window.');
+    }
+  }
+});
 ```
 
 -----------------------

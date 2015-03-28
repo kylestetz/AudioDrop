@@ -1,11 +1,4 @@
 function AudioDrop(options) {
-  var self = this;
-
-  var elements = [],
-      callback = null,
-      recurse  = true,
-      dragging = false
-  ;
 
   if(!options.context) {
     return console.error('Please supply AudioDrop with a `context` option.');
@@ -13,8 +6,8 @@ function AudioDrop(options) {
   if(!options.elements) {
     return console.error('Please supply AudioDrop with an `elements` option.');
   }
-  if(!options.callback) {
-    return console.error('Please supply AudioDrop with a `callback` option.');
+  if(!options.drop) {
+    return console.error('Please supply AudioDrop with a `drop` option.');
   }
 
   if(!Array.isArray(options.elements)) {
@@ -25,10 +18,16 @@ function AudioDrop(options) {
   // Event Binding
   // ==========================================
 
+  // we want to prevent the default behavior for window drops
+  window.addEventListener('dragleave', preventDefault, false);
+  window.addEventListener('dragover', preventDefault, false);
+  window.addEventListener('drop', preventDefault, false);
+
   // create events for each element passed in
   options.elements.forEach( function(element) {
+    element.addEventListener('dragenter', dragEnter, false);
     element.addEventListener('dragover', dragOver, false);
-    element.addEventListener('dragend', dragEnd, false);
+    element.addEventListener('dragleave', dragLeave, false);
     element.addEventListener('drop', drop, false);
   });
 
@@ -51,13 +50,23 @@ function AudioDrop(options) {
     return false;
   }
 
+  function dragEnter(e) {
+    options.dragEnter && options.dragEnter(e);
+  }
+
   function dragOver(e) {
     e.stopPropagation();
     e.preventDefault();
+    options.dragOver && options.dragOver(e);
   }
 
-  function dragEnd(e) {
+  function dragLeave(e) {
     e.stopPropagation();
+    e.preventDefault();
+    options.dragLeave && options.dragLeave(e);
+  }
+
+  function preventDefault(e) {
     e.preventDefault();
   }
 
@@ -71,7 +80,7 @@ function AudioDrop(options) {
     fileReader.onload = function(fileEvent) {
       var data = fileEvent.target.result;
       options.context.decodeAudioData(data, function(buffer) {
-        options.callback(buffer, file);
+        options.drop(buffer, file);
       }, function(e) {
         console.error('There was an error decoding ' + file.name);
       });
